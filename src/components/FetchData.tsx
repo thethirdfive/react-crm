@@ -13,10 +13,17 @@ export const Header1 = {
   Authorization: localStorage.getItem('Token')
 }
 
-export function fetchData(url: any, method: any, data = '', header: any) {
-  return fetch(`${SERVER}${url}`, {
+export async function fetchData(url: any, method: any, data = '', header: any) {
+  const response = await fetch(`${SERVER}${url}`, {
     method,
     headers: header,
     body: data
-  }).then((response) => response.json())
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Something went wrong');
+  }
+
+  return response.json();
 }
